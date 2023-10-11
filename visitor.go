@@ -216,13 +216,12 @@ func NewExtractor() *Extractor {
 	return &Extractor{seen: make(map[ast.Node]struct{})}
 }
 
-func (v *Extractor) Extract(js string) (apis []string, err error) {
-	program, err := parser.ParseFile(nil, "", js, 0)
-	if err != nil {
-		return nil, err
+func (v *Extractor) Extract(js string) (apis []string) {
+	program, _ := parser.ParseFile(nil, "", js, 0)
+	if program != nil {
+		Walk(v, program)
 	}
-	Walk(v, program)
-	return v.GetAPIs(), nil
+	return v.GetAPIs()
 }
 
 // Extractor ast遍历结构体
