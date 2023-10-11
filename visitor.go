@@ -3,6 +3,7 @@ package api_extractor
 import (
 	"fmt"
 	"github.com/robertkrimen/otto/ast"
+	"github.com/robertkrimen/otto/parser"
 	"github.com/thoas/go-funk"
 	"sync"
 )
@@ -209,6 +210,19 @@ func Walk(v ast.Visitor, n ast.Node) {
 	default:
 		panic(fmt.Sprintf("Walk: unexpected node type %T", n))
 	}
+}
+
+func NewExtractor() *Extractor {
+	return &Extractor{seen: make(map[ast.Node]struct{})}
+}
+
+func (v *Extractor) Extract(js string) (apis []string, err error) {
+	program, err := parser.ParseFile(nil, "", js, 0)
+	if err != nil {
+		return nil, err
+	}
+	Walk(v, program)
+	return v.GetAPIs(), nil
 }
 
 // Extractor ast遍历结构体
