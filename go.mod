@@ -1,4 +1,4 @@
-module api-extractor
+module github.com/lidarx/api-extractor
 
 go 1.20
 
